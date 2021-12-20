@@ -102,6 +102,7 @@ add_labels_as_columns <- function(data, labels) {
 #' @param labels the labels
 #'
 #' @return the dataframe labeled
+#' @author Jones
 #' @export
 label_lists <- function(b, labels) {
   for (i in 1:length(b)) {
@@ -250,4 +251,23 @@ fun_plot <- function(data,
   ggsave(paste0(file_name, ".pdf"), p)
   ggsave(paste0(file_name, ".png"), p)
   p
+}
+
+#' Merge Folder
+#'
+#' Merge all of the tables in a particular folder into one dataframe, write it, and return it.
+#' @param path
+#'
+#' @return one dataframe
+#' @author Jones
+#' @export
+merge_folder <- function(path) {
+  files <- list.files(path, ".csv")
+  a <- list()
+  for (i in files) {
+    a[[i]] <- read.csv(i)
+  }
+  out <- map(a, function(x) reduce(x, bind_rows))
+  write.csv(out, "combined.csv")
+  out
 }
