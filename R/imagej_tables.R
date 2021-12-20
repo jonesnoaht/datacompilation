@@ -154,12 +154,6 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
   }
   if (! is.null(labels)) {
     ## Get the data-set inclusion
-    data %>%
-      map(function(d) map(getters, function(e) d %>% e)) %>%
-      label_lists(labels) -> data_set_inclusion
-    data %>%
-      map(function(d) map_lgl(getters, function(e) d %>% e)) -> bool_map
-    list(`data set inclusion` = data_set_inclusion, `bool map` = bool_map)
     for (i in names(data)) {
       for (j in labels) {
         if (grepl(j, i)) {
@@ -174,16 +168,8 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
   } else {
     ## Get the data-set inclusion
     labels <- combos %>% reduce(bind_rows) %>% names
-    data %>%
-      map(function(d) map(getters, function(e) d %>% e)) %>%
-      label_lists(labels) -> data_set_inclusion
-    # data %>%
-    #   map(function(d) map_lgl(getters, function(e) d %>% e)) -> bool_map
-    list(`data set inclusion` = data_set_inclusion, `bool map` = c()) # bool_map)
-    ## The case of null labels uses combo
-    combos_unique <- combos %>% reduce(bind_rows) %>% names
     for (i in names(data)) {
-      for (j in combos_unique) {
+      for (j in labels) {
         if (grepl(j, i)) {
           attr(data[[i]], j) <- TRUE
         }
