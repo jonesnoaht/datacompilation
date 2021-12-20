@@ -96,6 +96,20 @@ add_labels_as_columns <- function(data, labels) {
   data
 }
 
+#' Label Lists
+#'
+#' @param b the dataframe list to be labeled
+#' @param labels the labels
+#'
+#' @return the dataframe labeled
+#' @export
+label_lists <- function(b, labels) {
+  for (i in 1:length(b)) {
+    names(b[[i]]) <- labels
+  }
+  b
+}
+
 
 ##' Annotate and Combine
 ##'
@@ -122,7 +136,7 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
   my_bind_rows <<- function(a, b) bind_rows(a, b, .id = "image")
   ## A helper function to get the list of data frames included in each
   ## group
-  data_set_inclusion_and_bool_map <<- function(data, getters, labels) {
+  data_set_inclusion_and_bool_map <- function(data, getters, labels) {
     ## Define helper function to add names to the list of labels
     label_lists <- function(b, labels) {
       for (i in 1:length(b)) {
