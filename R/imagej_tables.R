@@ -262,7 +262,7 @@ fun_plot <- function(data,
 #' @author Jones
 #' @export
 merge_folder <- function(path) {
-  files <- list.files(path, ".csv")
+  files <- list.files(path, ".csv", full.names = TRUE)
   a <- list()
   for (i in files) {
     a[[i]] <- read.csv(i)
