@@ -1,7 +1,7 @@
 Package: datacompilation
 Type: Package
 Title: Compile Tables and Data
-Version: 0.1.18
+Version: 0.1.19
 Author: Noah Jones
 Maintainer: The package maintainer <noahtjones@ufl.edu>
 Description: The purpose of this package is to compile the tables that were generated from scripts written in ImageJ.
@@ -14,4 +14,5 @@ Imports:
     forcats,
     ggplot2,
     purrr,
-    tidyr
+    tidyr,
+    ggpubr
