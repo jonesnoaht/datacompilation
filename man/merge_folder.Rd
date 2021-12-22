@@ -4,7 +4,7 @@
 \alias{merge_folder}
 \title{Merge Folder}
 \usage{
-merge_folder(path)
+merge_folder(path, name = "combined")
 }
 \arguments{
 \item{path}{}

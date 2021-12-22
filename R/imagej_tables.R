@@ -70,7 +70,7 @@ grep_collected <- function(data, pattern) {
 ##' @author Jones
 ##' @export
 write_list_of_names <- function(folder, id = "-names") {
-  write.table(list.files(path = folder),
+  utils::write.table(list.files(path = folder),
               paste0(folder, id, ".csv"))
   paste0(folder, id, " has been created.")
 }
@@ -133,7 +133,7 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
   if (is.null(labels) && is.null(combos)) {
     stop("need labels or combos")
   }
-  ## A helper function for the reduce command later
+  ## A helper function for the purrr::reduce command later
   my_bind_rows <<- function(a, b) bind_rows(a, b, .id = "image")
   ## A helper function to get the list of data frames included in each
   ## group
@@ -147,11 +147,11 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
     }
     ## Get the data-set inclusion
     data %>%
-      map(function(d) map(getters, function(e) d %>% e)) %>%
+      purrr::map(function(d) purrr::map(getters, function(e) d %>% e)) %>%
       label_lists(labels) -> data_set_inclusion
     data %>%
-      map(function(d) map_lgl(getters, function(e) d %>% e)) -> bool_map
-    list(`data set inclusion` = data_set_inclusion, `bool map` = bool_map)
+      purrr::map(function(d) purrr::map_lgl(getters, function(e) d %>% e)) -> bool_purrr::map
+    list(`data set inclusion` = data_set_inclusion, `bool map` = bool_purrr::map)
   }
   if (! is.null(labels)) {
     ## Get the data-set inclusion
@@ -168,7 +168,7 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
     data1 <<- data
   } else {
     ## Get the data-set inclusion
-    labels <- combos %>% reduce(bind_rows) %>% names
+    labels <- combos %>% purrr::reduce(bind_rows) %>% names
     for (i in names(data)) {
       for (j in labels) {
         if (grepl(j, i)) {
@@ -182,30 +182,30 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
     data1 <<- data
   }
   if (is.null(combos)) {
-    ## data <- map(.x, ~ add_labels_as_columns(.x, labels))
-    labels_get <<- map(labels, ~ paste0(.x, "_get")) # labels for info about the datasets
-    map(labels, attr_getter) %>% walk2(labels_get, ~ assign(.y, .x)) ->> getters
+    ## data <- purrr::map(.x, ~ add_labels_as_columns(.x, labels))
+    labels_get <<- purrr::map(labels, ~ paste0(.x, "_get")) # labels for info about the datasets
+    purrr::map(labels, attr_getter) %>% walk2(labels_get, ~ assign(.y, .x)) ->> getters
     data_set_inclusion_and_bool_map(data, getters, labels)[[1]] ->> dsi
-    map(labels, function(label) keep(data, function(table) attr(table, label))) ->> df_sets
-    map(df_sets, function(set) map(set, function(table) fill(bind_cols(table, data.frame(attributes(table)[-c(1,2,3)]))))) ->> df_sets_annotated
-    map(df_sets, function(x) reduce(x, my_bind_rows)) -> out
+    purrr::map(labels, function(label) purrr::keep(data, function(table) attr(table, label))) ->> df_sets
+    purrr::map(df_sets, function(set) purrr::map(set, function(table) fill(bind_cols(table, data.frame(attributes(table)[-c(1,2,3)]))))) ->> df_sets_annotated
+    purrr::map(df_sets, function(x) purrr::reduce(x, my_bind_rows)) -> out
     names(out) <- labels
   } else {
-    combos %>% reduce(bind_rows) %>% # generating dataframe
+    combos %>% purrr::reduce(bind_rows) %>% # generating dataframe
       # automatically allows us to get
       # unique rows and names
       names -> combos_unique # assign names
     labels <- combos_unique
     ## combos_unique <- unique(flatten(combos))
-    combos_get <<- map(combos_unique, ~ paste0(.x, "_get")) # combos for info about the datasets
-    map(combos_unique, attr_getter) %>%
+    combos_get <<- purrr::map(combos_unique, ~ paste0(.x, "_get")) # combos for info about the datasets
+    purrr::map(combos_unique, attr_getter) %>%
       walk2(combos_get, ~ assign(.y, .x)) ->> getters # function to get the value of the specified attribute
     data_set_inclusion_and_bool_map(data, getters, labels)[[1]] ->> dsi
-    map(combos, function(combo) keep(data, function(table) all(map_lgl(names(combo), function(name) (attr(table, name) == combo[[name]]))))) ->> df_sets
-    map(df_sets, function(set) map(set, function(table) fill(bind_cols(table, data.frame(attributes(table)[-c(1,2,3)]))))) ->> df_sets_annotated
-    map(df_sets_annotated, function(x) reduce(x, my_bind_rows)) -> out
+    purrr::map(combos, function(combo) purrr::keep(data, function(table) all(purrr::map_lgl(names(combo), function(name) (attr(table, name) == combo[[name]]))))) ->> df_sets
+    purrr::map(df_sets, function(set) purrr::map(set, function(table) fill(bind_cols(table, data.frame(attributes(table)[-c(1,2,3)]))))) ->> df_sets_annotated
+    purrr::map(df_sets_annotated, function(x) purrr::reduce(x, my_bind_rows)) -> out
     my_str_flatten <- function(x) str_flatten(x, "-")
-    names(out) <- map_chr(map(combos, names), my_str_flatten)
+    names(out) <- purrr::map_chr(purrr::map(combos, names), my_str_flatten)
   }
   out
 }
@@ -228,28 +228,28 @@ fun_plot <- function(data,
                      x_lab = "Reporter",
                      y_lab = "Circularity (index)",
                      file_name = "plot") {
-  x_quo <- quo(!! sym(x))
-  y_quo <- quo(!! sym(y))
+  x_quo <- rlang::quo(`!!`(sym(x)))
+  y_quo <- rlang::quo(`!!`(sym(y)))
   capitalize <- function(string) {
     string <- tolower(string)
     substr(string, 1, 1) <- toupper(substr(string, 1, 1))
     string
   }
 
-  ggplot(data, aes(!!x_quo, !!y_quo),
+  ggplot2::ggplot(data, aes(`!!`(x_quo), `!!`(y_quo)),
          labels = capitalize) +
-    labs(title = paste(x, "vs", y)) +
-    xlab(x_lab) +
-    ylab(y_lab) +
-    geom_violin() +
-    stat_summary() +
-    geom_signif(comparisons = list(c("FALSE", "TRUE")),
+    ggplot2::labs(title = paste(x, "vs", y)) +
+    ggplot2::xlab(x_lab) +
+    ggplot2::ylab(y_lab) +
+    ggplot2::geom_violin() +
+    ggplot2::stat_summary() +
+    ggplot2::geom_signif(comparisons = list(c("FALSE", "TRUE")),
                 map_signif_level = function(p) sprintf("p = %.2g", p)) +
-    scale_x_discrete(limits = c("FALSE","TRUE"),
+    ggplot2::scale_x_discrete(limits = c("FALSE","TRUE"),
                      labels = capitalize) +
-    theme_pubr()  -> p
-  ggsave(paste0(file_name, ".pdf"), p)
-  ggsave(paste0(file_name, ".png"), p)
+    ggpubr::theme_pubr()  -> p
+  ggplot2::ggsave(paste0(file_name, ".pdf"), p)
+  ggplot2::ggsave(paste0(file_name, ".png"), p)
   p
 }
 
@@ -261,13 +261,14 @@ fun_plot <- function(data,
 #' @return one dataframe
 #' @author Jones
 #' @export
-merge_folder <- function(path) {
+merge_folder <- function(path, name = "combined") {
   files <- list.files(path, ".csv", full.names = TRUE)
   a <- list()
   for (i in files) {
     a[[i]] <- read.csv(i)
   }
-  out <- map(a, function(x) reduce(x, bind_rows))
-  write.csv(out, "combined.csv")
+  # names(a) <- files
+  out <- purrr::reduce(a, dplyr::bind_rows)
+  utils::write.csv(out, paste0(name, ".csv"))
   out
 }
