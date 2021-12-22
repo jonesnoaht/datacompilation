@@ -3,7 +3,7 @@ Type: Package
 Title: Compile Tables and Data
 Version: 0.1.19
 Author: Noah Jones
-Maintainer: The package maintainer <noahtjones@ufl.edu>
+Maintainer: Noah Jones <noahtjones@ufl.edu>
 Description: The purpose of this package is to compile the tables that were generated from scripts written in ImageJ.
 License: GNU 3.1
 Encoding: UTF-8
