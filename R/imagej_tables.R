@@ -70,7 +70,7 @@ grep_collected <- function(data, pattern) {
 ##' @author Jones
 ##' @export
 write_list_of_names <- function(folder = ".", id = "-names") {
-  dplyr::if_else(folder == ".", assign("folder1", "the"), assign("folder1", folder))
+  ifelse(folder == ".", assign("folder1", "the"), assign("folder1", folder))
   utils::write.table(list.files(path = folder),
               paste0(folder1, id, ".csv"))
   paste0(folder1, id, " has been created.")
