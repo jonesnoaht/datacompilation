@@ -69,10 +69,11 @@ grep_collected <- function(data, pattern) {
 ##' @return a string describing the result
 ##' @author Jones
 ##' @export
-write_list_of_names <- function(folder, id = "-names") {
+write_list_of_names <- function(folder = ".", id = "-names") {
+  if_else(folder == ".", folder1 <- "", folder1 <- folder)
   utils::write.table(list.files(path = folder),
-              paste0(folder, id, ".csv"))
-  paste0(folder, id, " has been created.")
+              paste0(folder1, id, ".csv"))
+  paste0(folder1, id, " has been created.")
 }
 ##' Add Labels as Columns
 ##'

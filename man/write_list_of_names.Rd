@@ -4,7 +4,7 @@
 \alias{write_list_of_names}
 \title{Create a CSV containing a list of the file names}
 \usage{
-write_list_of_names(folder, id = "-names")
+write_list_of_names(folder = ".", id = "-names")
 }
 \arguments{
 \item{folder}{the path to a directory}
