@@ -15,7 +15,11 @@
 ##' @export
 collect_csv_files <- function(path = ".", pattern = "*.csv",
                               annotations = NULL) {
-  files <- list.files(path, pattern)
+  files <- list.files(path, pattern, full.names = TRUE)
+  file_names <- c()
+  for (i in files) {
+    file_names <- c(file_name, basename(i))
+  }
   a <- list()
   if (is.null(annotations)) {
     for (i in files) {
