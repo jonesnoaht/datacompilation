@@ -1,7 +1,7 @@
 Package: datacompilation
 Type: Package
 Title: Compile Tables and Data
-Version: 0.1.27
+Version: 0.1.28
 Author: Noah Jones
 Maintainer: Noah Jones <noahtjones@ufl.edu>
 Description: The purpose of this package is to compile the tables that were generated from scripts written in ImageJ.
