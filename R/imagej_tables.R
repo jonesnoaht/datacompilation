@@ -139,7 +139,7 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
     stop("need labels or combos")
   }
   ## A helper function for the purrr::reduce command later
-  my_bind_rows <<- function(a, b) bind_rows(a, b, .id = "image")
+  my_bind_rows <- bind_rows(.id = "image")
   ## A helper function to get the list of data frames included in each
   ## group
   data_set_inclusion_and_bool_map <- function(data, getters, labels) {
@@ -208,7 +208,7 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
     data_set_inclusion_and_bool_map(data, getters, labels)[[1]] ->> dsi
     purrr::map(combos, function(combo) purrr::keep(data, function(table) all(purrr::map_lgl(names(combo), function(name) (attr(table, name) == combo[[name]]))))) ->> df_sets
     purrr::map(df_sets, function(set) purrr::map(set, function(table) fill(bind_cols(table, data.frame(attributes(table)[-c(1,2,3)]))))) ->> df_sets_annotated
-    purrr::map(df_sets_annotated, function(x) purrr::reduce(x, my_bind_rows)) -> out
+    purrr::map(df_sets_annotated, function(x) purrr::reduce(x, bind_rows)) -> out
     my_str_flatten <- function(x) str_flatten(x, "-")
     names(out) <- purrr::map_chr(purrr::map(combos, names), my_str_flatten)
   }
