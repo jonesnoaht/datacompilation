@@ -16,9 +16,9 @@
 collect_csv_files <- function(path = ".", pattern = "*.csv",
                               annotations = NULL) {
   files <- list.files(path, pattern, full.names = TRUE)
-  file_names <- c()
+  file_name <- c()
   for (i in files) {
-    file_names <- c(file_name, basename(i))
+    file_name <- c(file_name, basename(i))
   }
   a <- list()
   if (is.null(annotations)) {
