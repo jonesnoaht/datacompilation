@@ -155,8 +155,8 @@ annotate_and_combine <- function(data, labels = NULL, combos = NULL) {
       purrr::map(function(d) purrr::map(getters, function(e) d %>% e)) %>%
       label_lists(labels) -> data_set_inclusion
     data %>%
-      purrr::map(function(d) purrr::map_lgl(getters, function(e) d %>% e)) -> bool_purrr::map
-    list(`data set inclusion` = data_set_inclusion, `bool map` = bool_purrr::map)
+      purrr::map(function(d) purrr::map_lgl(getters, function(e) d %>% e)) -> purrr::map
+    list(`data set inclusion` = data_set_inclusion, `bool map` = purrr::map)
   }
   if (! is.null(labels)) {
     ## Get the data-set inclusion
